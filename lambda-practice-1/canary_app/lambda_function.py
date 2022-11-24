@@ -3,8 +3,8 @@ from datetime import datetime
 from urllib.request import Request, urlopen
 
 # SITE = os.environ['site']  # URL of the site to check, stored in the site environment variable
-# EXPECTED = os.environ['expected']  # String expected to be on the page, stored in the expected environment variable
 
+# EXPECTED = os.environ['expected']  # String expected to be on the page, stored in the expected environment variable
 
 def validate(res, expected_value):
     '''Return False to trigger the canary
