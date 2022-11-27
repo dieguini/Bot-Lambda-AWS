@@ -6,7 +6,10 @@
 		"ghcr.io/devcontainers/features/terraform:1": {},
 		"ghcr.io/guiyomh/features/vim:0": {}
 	},
-	"postCreateCommand": "sudo apt install make -y && make"
+	"postCreateCommand": "sudo apt install make -y && make",
+
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	// "workspaceFolder": "/workspace"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

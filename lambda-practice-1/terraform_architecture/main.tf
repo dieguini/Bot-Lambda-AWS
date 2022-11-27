@@ -69,11 +69,11 @@ resource "aws_iam_role_policy_attachment" "lambda_logs_attachment" {
 data "archive_file" "zip_python_code" {
   type        = "zip"
   source_dir  = "../${path.module}/canary_app/"
-  output_path = "../${path.module}/canary_app/canary_app.zip"
+  output_path = "../${path.module}/canary_app.zip"
 }
 # Lambda - Create lambda functions
 resource "aws_lambda_function" "lambda_fun" {
-  filename      = "../${path.module}/canary_app/canary_app.zip"
+  filename      = "../${path.module}/canary_app.zip"
   function_name = "canary_app_diego-jauregui_2_lam"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
