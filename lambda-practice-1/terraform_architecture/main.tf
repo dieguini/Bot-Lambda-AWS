@@ -74,14 +74,36 @@ data "archive_file" "zip_python_code" {
 # Lambda - Create lambda functions
 resource "aws_lambda_function" "lambda_fun" {
   filename      = "../${path.module}/canary_app.zip"
-  function_name = "canary_app_diego-jauregui_2_lam"
+  function_name = var.lambda_function_name
+  description   = var.lambda_function_description
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.7"
+  publish       = var.lambda_publish
+
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs_attachment
   ]
 }
+# Lambda - Creates lambda functions
+resource "aws_lambda_alias" "lambda_fun_alias" {
+  count = var.lambda_publish ? 1 : 0
+
+  name             = var.lambda_alias_name
+  description      = var.lambda_alias_description
+  function_name    = aws_lambda_function.lambda_fun.arn
+  function_version = var.lambda_fun_version
+
+  depends_on = [
+    aws_lambda_function.lambda_fun
+  ]
+  /* routing_config {
+    additional_version_weights = {
+      "2" = 0.5
+    }
+  } */
+}
+
 ################################################################################
 # Outputs
 ################################################################################
