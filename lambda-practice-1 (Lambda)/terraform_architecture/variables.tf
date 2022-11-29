@@ -41,5 +41,5 @@ variable "lambda_fun_version" {
   type        = string
   description = "Version of lambda function to be applied"
 
-  default = "0.0.1"
+  default = "1"
 }
