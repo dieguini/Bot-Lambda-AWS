@@ -13,7 +13,7 @@ def lambda_handler(event, context):
     for record in records:
         bucket = record['s3']['bucket']['name']
         key = record['s3']['object']['key']
-        print(f"bucket", bucket, "key", key)
+        print("bucket: ", bucket, "key: ", key)
         
     #get filename and extension
     filename = key.split('/')[-1].split('.')[0]
@@ -22,10 +22,11 @@ def lambda_handler(event, context):
     #get timestamp
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
+    print("timestamp: ", timestamp)
     #create target_key
-    target_key = f"output_data/{filename}_{timestamp}.{extension}"
+    target_key = f"output/{filename}-{timestamp}.{extension}"
 
-    target_bucket = "s3-monitoring-andresgb"
+    target_bucket = "s3-monitoting-bucket-diegojauregui-tf"
   
     s3.meta.client.copy({
         "Bucket": bucket,

@@ -43,6 +43,29 @@ resource "aws_iam_policy" "lambda_policy" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "revoke_keys_role_policy" {
+  name = var.lambda_policy_revoke_name
+  # role = aws_iam_role.lambda_iam.id
+  role = aws_iam_role.lambda_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:*",
+        "ses:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 # Attachment - Between Role & Policy
 resource "aws_iam_role_policy_attachment" "lambda_logs_attachment" {
   role       = aws_iam_role.lambda_role.name
@@ -59,14 +82,15 @@ data "archive_file" "zip_python_code" {
 }
 # Lambda - Create lambda functions
 resource "aws_lambda_function" "lambda_fun" {
-  filename      = data.archive_file.zip_python_code.output_path
+  filename = data.archive_file.zip_python_code.output_path
 
-  function_name = var.lambda_function_name
-  description   = var.lambda_function_description
-  role          = aws_iam_role.lambda_role.arn
-  handler       = "lambda_function.lambda_handler"
-  runtime       = "python3.7"
-  publish       = var.lambda_publish
+  function_name    = var.lambda_function_name
+  description      = var.lambda_function_description
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "lambda_function.lambda_handler"
+  runtime          = "python3.7"
+  publish          = var.lambda_publish
+  source_code_hash = filebase64sha256(data.archive_file.zip_python_code.output_path)
 
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs_attachment,
@@ -83,24 +107,12 @@ resource "aws_lambda_alias" "lambda_fun_alias" {
   function_version = var.lambda_fun_version
 
   depends_on = [
-    aws_lambda_function.lambda_fun
+    aws_lambda_function.lambda_fun,
+    data.archive_file.zip_python_code
   ]
   /* routing_config {
     additional_version_weights = {
       "2" = 0.5
     }
   } */
-}
-
-################################################################################
-# Outputs
-################################################################################
-output "aws_role_output" {
-  value = aws_iam_role.lambda_role.name
-}
-output "aws_role_arn" {
-  value = aws_iam_role.lambda_role.arn
-}
-output "loggin_arn_output" {
-  value = aws_iam_policy.lambda_policy.arn
 }

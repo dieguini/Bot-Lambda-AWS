@@ -63,3 +63,7 @@ variable "lambda_policy_name" {
   type = string
   description = "Lambda role name"
 }
+variable "lambda_policy_revoke_name" {
+  type = string
+  description = "Lambda revoke policy name"
+}

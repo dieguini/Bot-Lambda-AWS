@@ -38,7 +38,7 @@ resource "aws_s3_object" "folder_structure" {
 ################################################################################
 # Lambda Function Creation
 ################################################################################
-module "lambda_creation" {
+module "lambda_function" {
   source             = "./modules/lambda"
 
   # Lambda Function Variables
@@ -56,4 +56,15 @@ module "lambda_creation" {
 
   lambda_role_name = var.lambda_role_name
   lambda_policy_name = var.lambda_policy_name
+  lambda_policy_revoke_name = var.lambda_policy_revoke_name
+}
+################################################################################
+# Lambda and S3 Integration
+################################################################################
+module "s3_lambda_intgration" {
+  source = "./modules/lambda_s3"
+
+  bucket_id = module.s3_bucket.s3_bucket_id
+  lambda_function_arn = module.lambda_function.lambda_function_arn
+  lambda_function_name = module.lambda_function.lambda_function_name
 }
